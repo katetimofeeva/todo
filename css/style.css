@@ -1,0 +1,368 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-style: italic;
+  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.4em;
+  background: #eaeaea;
+  color: #4d4d4d;
+  width: 550px;
+  margin: 0 auto;
+}
+
+h1 {
+  width: 100%;
+  position: absolute;
+  top: -60px;
+  font-size: 70px;
+  font-weight: bold;
+  display: block;
+  margin: 0 auto;
+  color: #b3b3b3;
+  color: rgba(255, 255, 255, 0.3);
+  text-shadow: -1px -1px rgba(0, 0, 0, 0.2);
+  /* text-rendering: optimizeLegibility; */
+}
+
+input {
+  border: none;
+  font-size: 2em;
+  outline: none;
+}
+
+label {
+  display: block;
+}
+
+input::placeholder {
+  font-size: 1.2em;
+  font-style: italic;
+}
+
+li {
+  list-style-type: none;
+}
+
+.main {
+  width: 550px;
+  /* background: rgba(255, 255, 255, 0.9); */
+  margin: 130px 0 40px 0;
+
+  position: relative;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  /* box-shadow: 0 2px 6px 0 rgb(0 0 0 / 20%), 0 25px 50px 0 rgb(0 0 0 / 15%); */
+}
+
+.header_info::before {
+  content: "";
+  border-left: 1px solid #f5d6d6;
+  border-right: 1px solid #f5d6d6;
+  width: 2px;
+  position: absolute;
+  top: 0;
+  left: 45px;
+  height: 100%;
+  z-index: 2;
+}
+
+.header {
+  position: relative;
+
+  height: 82px;
+  text-align: center;
+  padding-top: 15px;
+  border-radius: inherit;
+}
+
+.header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 15px;
+  z-index: 2;
+  border-bottom: 1px solid #6c615c;
+  background: -webkit-linear-gradient(
+    top,
+    rgba(132, 110, 100, 0.8),
+    rgba(101, 84, 76, 0.8)
+  );
+}
+/* .input_header::before {
+   content: "»";
+  font-size: 28px;
+  color: #d9d9d9;
+  background-color: #fff;
+  padding: 20px 10px;
+ transform: rotate(90deg);
+} */
+
+.input_header,
+.wrapper {
+  width: 548px;
+  height: 65px;
+  display: flex;
+  background-color: #fff;
+}
+/* .todo_list_item-wrapp {
+  background-color: fff;
+  position: relative;
+  padding: 15px 60px 15px 15px;
+  margin-left: 45px;
+} */
+
+.checkbox_header {
+  display: none;
+  /* margin: 0;
+  width: 45px;
+  height: 80px; */
+}
+
+.span {
+  font-size: 28px;
+  color: #d9d9d9;
+  cursor: pointer;
+  padding: 0 17px;
+  transform: rotate(90deg);
+}
+
+:checked + label > .span {
+  color: #737373;
+}
+
+.checkbox_header + label {
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+
+.checkbox_header + .check_all_label::before {
+  content: "";
+  display: inline-block;
+  flex-shrink: 0;
+  flex-grow: 0;
+  width: 45px;
+  height: 65px;
+  background-color: #fff;
+}
+
+.new_todo {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  width: 100%;
+  font-size: 24px;
+  line-height: 1.4em;
+  border: 0;
+  /* box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, 0.2); */
+  padding: 15px;
+}
+
+.todo_list_item {
+  position: relative;
+  font-size: 24px;
+  border-bottom: 1px dotted #ccc;
+}
+
+
+
+.wrapper label {
+  background-color: #fff;
+
+  white-space: pre;
+  word-break: break-word;
+
+  display: block;
+  line-height: 1.2;
+  -webkit-transition: color 0.4s;
+  transition: color 0.4s;
+}
+
+.checkbox {
+  display: none;
+}
+
+.checkbox + label {
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+
+.checkbox + label::before {
+  content: "✔";
+  cursor: pointer;
+  line-height: 43px;
+  font-size: 20px;
+  display: inline-block;
+  /* width: 38px;
+  height: 55px; */
+  padding-top: 10px;
+  padding-left: 15px;
+  color: #d9d9d9;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50% 50%;
+}
+
+.checkbox:checked + label::before {
+  color: #85ada7;
+  text-shadow: 0 1px 0 #669991;
+  bottom: 1px;
+}
+
+.item_task {
+  position: relative;
+  width: 510px;
+  background-color: #fff;
+  margin-left: 20px;
+  padding: 18px 15px;
+  font-size: 24px;
+}
+
+.item_task_value {
+  display: block;
+  width: 490px;
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  opacity: 0;
+}
+.item_task_value.active {
+  display: block;
+  width: 490px;
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  opacity: 1;
+  height: 60px;
+  font-size: 24px;
+  color: #4d4d4d;
+  padding: 18px 15px;
+}
+
+
+
+.delete {
+  content: "✖";
+  display: none;
+  border: none;
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  width: 40px;
+  height: 40px;
+  margin: auto 0;
+  font-size: 22px;
+  background-color: #fff;
+  color: #a88a8a;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.delete:hover {
+  text-shadow: 0 0 1px #000, 0 0 10px rgb(199 107 107 / 80%);
+  transform: scale(1.3);
+}
+
+.todo_list_item:hover .delete {
+  display: block;
+}
+
+.hide {
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
+.active {
+  font-weight: bold;
+}
+
+.footer {
+  width: 548px;
+  height: 20px;
+  color: #777;
+  padding: 0 15px;
+  position: relative;
+}
+
+.footer::before {
+  content: "";
+  top: -430%;
+  position: absolute;
+  right: 0;
+  bottom: 31px;
+  left: 0;
+  height: 50px;
+  z-index: -1;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 30%), 0 6px 0 -3px rgb(255 255 255 / 80%),
+    0 7px 1px -3px rgb(0 0 0 / 30%), 0 43px 0 -6px rgb(255 255 255 / 80%),
+    0 44px 2px -6px rgb(0 0 0 / 20%);
+}
+
+.footer_buttons {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+
+  right: 0;
+  left: 0;
+  padding-left: 200px;
+  top: -125%;
+}
+
+.footer_buttons li {
+  display: inline-block;
+}
+
+.todo_active {
+  position: absolute;
+  left: 10px;
+  top: -125%;
+}
+
+.btn_all,
+.btn_active,
+.btn_compleated,
+.clear_completed {
+  border: hidden;
+  color: #83756f;
+  margin: 2px;
+  cursor: pointer;
+}
+
+.clear_completed {
+  position: absolute;
+  right: 10px;
+  float: right;
+  position: relative;
+  line-height: 20px;
+  text-decoration: none;
+  background: rgba(0, 0, 0, 0.1);
+  font-size: 11px;
+  padding: 0 10px;
+  border-radius: 3px;
+  box-shadow: 0 -1px 0 0 rgb(0 0 0 / 20%);
+  top: -140%;
+}
+
+/* .visibility {
+  visibility: visible;
+} */
+.not_visibility {
+  visibility: hidden;
+}
+
+.active_task {
+  color: #a9a9a9;
+  text-decoration: line-through;
+}

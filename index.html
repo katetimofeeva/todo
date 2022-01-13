@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section class="main">
+      <header class="header">
+        <h1>todos</h1>
+        <div class="input_header">
+          <input
+            id="input_header_check"
+            class="checkbox_header"
+            type="checkbox"
+          />
+          <label for="input_header_check">
+            <span class="span">»</span>
+          </label>
+          <input
+            type="text"
+            class="new_todo"
+            placeholder="Whats need to be done?"
+            autofocus
+          />
+        </div>
+      </header>
+
+      <section class="todo">
+        <ul class="todo_list"></ul>
+      </section>
+    </section>
+    <footer class="footer ">
+      <span class="todo_active"> <strong></strong> items left</span>
+
+      <ul class="footer_buttons">
+        <li>
+          <button class="btn_all">All</button>
+        </li>
+        <li>
+          <button class="btn_active">Active</button>
+        </li>
+        <li>
+          <button class="btn_compleated">Completed</button>
+        </li>
+      </ul>
+      <button class="clear_completed not_visibility">
+        Clear completed (<strong> </strong>)
+      </button>
+    </footer>
+<!-- disabled-->
+
+    
+    
+    <script src="js/script.js"></script>
+  </body>
+</html>
