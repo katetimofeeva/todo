@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let showTasks = [],
     tasks = [],
-    marker = "all"; // Filter
+    marker = "all"; // Filter status
 
   hideAdditionalElements();
 
@@ -97,6 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       input.classList.add("item_task_value");
       input.setAttribute("disabled", "");
+      input.setAttribute("data-id", item.id);
       input.value = item.desc;
 
       label.setAttribute("for", item.id);
@@ -149,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tasks = tasks.filter((item) => {
       return item.id !== id;
     });
+
     if (tasks.length === 0) {
       marker = "all";
     }
@@ -159,6 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleClearAllBtn();
 
     hideAdditionalElements();
+    markToggleAllTaks();
 
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }
@@ -182,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function markToggleAllTaks() {
-    const res = showTasks.some((item) => !item.completed);
+    const res = tasks.some((item) => !item.completed);
 
     res
       ? (completeAllCheckbox.checked = false)
@@ -193,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const res = tasks.reduce(
       function (acc, { completed }) {
         if (completed) {
-          //  на каждой итерации присваиваю в свойство completed его значение+1
+        
           acc.completed += (acc[completed] || 0) + 1;
         } else {
           acc.active += (acc[completed] || 0) + 1;
@@ -287,8 +290,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function enterTask(e) {
-    if (e.keyCode === 13 && mainInput.value) {
-      const item = { desc: mainInput.value, id: Date.now(), completed: false };
+    if (e.keyCode === 13 && mainInput.value.trim() && mainInput.value.length <= 35) {
+      const item = {
+        desc: mainInput.value.trim(),
+        id: Date.now(),
+        completed: false,
+      };
       tasks.push(item);
 
       filterArr();
@@ -308,23 +315,22 @@ document.addEventListener("DOMContentLoaded", () => {
       btnAll.classList.add("active");
       btnActive.classList.remove("active");
       btnCompleated.classList.remove("active");
-    }
-    if (marker === "active") {
-      showActiveTasks();
-      console.log('active')
-    } else if (marker === "completed") {
-      showCompletedtasks();
-      console.log('completed')
+      if (marker === "active") {
+        showActiveTasks();
+        console.log("active");
+      } else if (marker === "completed") {
+        showCompletedtasks();
+        console.log("completed");
+      }
     }
   }
 
+  function deletCompletedTasks() {
+    tasks = tasks.filter((item) => {
+      return !item.completed;
+    });
 
-function deletCompletedTasks() {
-  tasks = tasks.filter(item => {
-    return !item.completed
-  })
-
-   filterArr();
+    filterArr();
     render();
     countTask();
 
@@ -339,13 +345,22 @@ function deletCompletedTasks() {
     } else {
       showAllTasks();
     }
-}
-  
+  }
 
   function editTask(event) {
     const target = event.target;
+
     let taskDeskr = target.value;
     // console.log(taskDeskr);
+    if (!taskDeskr.trim()) {
+      deleteTask(event);
+    }
+
+    if (taskDeskr.length >30){
+     taskDeskr = taskDeskr.substring(0, 30)+'...'
+      console.log(taskDeskr)
+      
+    }
 
     tasks.forEach((item) => {
       if (
@@ -359,11 +374,9 @@ function deletCompletedTasks() {
 
       localStorage.setItem("tasks", JSON.stringify(tasks));
     });
-    // target.setAttribute("disabled", '')
-
-    target.classList.remove("active"); //active
-    // target.classList.add("item_task_value");
-
+ 
+    target.classList.remove("active"); 
+    
     target.parentElement.previousElementSibling.classList.remove(
       "not_visibility"
     );
@@ -376,11 +389,11 @@ function deletCompletedTasks() {
     target.removeAttribute("disabled");
     target.parentElement.previousElementSibling.classList.add("not_visibility");
     target.classList.add("active");
-    // target.classList.remove("item_task_value");
     target.parentElement.nextElementSibling.classList.add("hide");
     target.focus();
+    console.log(target)
     target.addEventListener("keydown", (e) => {
-      if (e.keyCode === 13) {
+      if (e.keyCode === 13 ) {
         target.removeEventListener("blur", editTask);
         editTask(e);
       }
@@ -388,3 +401,5 @@ function deletCompletedTasks() {
     target.addEventListener("blur", editTask);
   }
 });
+
+
