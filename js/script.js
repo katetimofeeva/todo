@@ -196,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const res = tasks.reduce(
       function (acc, { completed }) {
         if (completed) {
-        
           acc.completed += (acc[completed] || 0) + 1;
         } else {
           acc.active += (acc[completed] || 0) + 1;
@@ -290,7 +289,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function enterTask(e) {
-    if (e.keyCode === 13 && mainInput.value.trim() && mainInput.value.length <= 35) {
+    if (
+      e.keyCode === 13 &&
+      mainInput.value.trim() &&
+      mainInput.value.length <= 35
+    ) {
       const item = {
         desc: mainInput.value.trim(),
         id: Date.now(),
@@ -356,10 +359,9 @@ document.addEventListener("DOMContentLoaded", () => {
       deleteTask(event);
     }
 
-    if (taskDeskr.length >30){
-     taskDeskr = taskDeskr.substring(0, 30)+'...'
-      console.log(taskDeskr)
-      
+    if (taskDeskr.length > 30) {
+      taskDeskr = taskDeskr.substring(0, 30) + "...";
+      console.log(taskDeskr);
     }
 
     tasks.forEach((item) => {
@@ -374,9 +376,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       localStorage.setItem("tasks", JSON.stringify(tasks));
     });
- 
-    target.classList.remove("active"); 
-    
+
+    target.classList.remove("active");
+
     target.parentElement.previousElementSibling.classList.remove(
       "not_visibility"
     );
@@ -391,9 +393,9 @@ document.addEventListener("DOMContentLoaded", () => {
     target.classList.add("active");
     target.parentElement.nextElementSibling.classList.add("hide");
     target.focus();
-    console.log(target)
+    console.log(target);
     target.addEventListener("keydown", (e) => {
-      if (e.keyCode === 13 ) {
+      if (e.keyCode === 13) {
         target.removeEventListener("blur", editTask);
         editTask(e);
       }
@@ -401,5 +403,3 @@ document.addEventListener("DOMContentLoaded", () => {
     target.addEventListener("blur", editTask);
   }
 });
-
-
