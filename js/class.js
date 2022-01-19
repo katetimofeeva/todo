@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
           this.tasks.push(new Task(e.target.value, Date.now(), false));
 
           this.completedAllCheckbox.checked = false;
+
           this.filterTasks();
 
           this.clearList();
@@ -54,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       this.filterTasks();
-      this.render();
+      // this.render();
       this.changeValueTask();
       if (this.showTasks.length === 0) {
         this.completeAllSpan.classList.add("not_visibility");
@@ -73,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
       footer.counter();
       footer.toggleBtnCompleteTask();
       footer.hideFooter();
-      this.render();
+      // this.render();
       this.checkAdditionalElement();
 
       localStorage.setItem("tasks", JSON.stringify(this.tasks));
@@ -117,6 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         this.completeAllSpan.classList.remove("not_visibility");
       }
     }
+
     filterTasks() {
       switch (this.marker) {
         case "all":
@@ -185,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
       this.filterTasks();
-      this.render();
+      // this.render();
       this.changeValueTask();
       footer.hideFooter();
       footer.toggleBtnCompleteTask();
@@ -277,6 +279,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     deleteTask() {
       main.deleteTask(this.id);
+      if (main.showTasks.length === 0) {
+        footer.hideFooter();
+      }
     }
 
     toggleCompleteTask() {
@@ -286,18 +291,18 @@ document.addEventListener("DOMContentLoaded", () => {
     setEdit(e) {
       const target = e.target;
       target.focus();
-
+      const bindedEditTask = this.editTask.bind(this);
       target.removeAttribute("disabled");
       target.classList.add("active");
       target.value = this.descr;
 
       target.parentElement.nextElementSibling.classList.add("hide");
 
-      target.addEventListener("blur", (e) => this.editTask(e));
-      
+      target.addEventListener("blur", bindedEditTask);
+
       target.addEventListener("keydown", (e) => {
         if (e.keyCode === 13) {
-          target.removeEventListener("blur", this.editTask);
+          target.removeEventListener("blur", bindedEditTask);
           this.editTask(e);
         }
       });
@@ -383,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
       main.filterTasks();
       this.delete();
 
-      main.render();
+      // main.render();
 
       this.btnAll.classList.add("active");
       this.btnActive.classList.remove("active");
@@ -403,6 +408,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (main.showTasks.length === 0) {
         main.completeAllSpan.classList.add("not_visibility");
+      } else {
+        main.completeAllSpan.classList.remove("not_visibility");
       }
     }
 
