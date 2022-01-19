@@ -28,10 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
           this.tasks.push(new Task(e.target.value, Date.now(), false));
 
           this.completedAllCheckbox.checked = false;
-
-          footer.btnAll.classList.add("active");
-          footer.btnActive.classList.remove("active");
-          footer.btnCompleted.classList.remove("active");
+          this.filterTasks();
 
           this.clearList();
 
@@ -41,10 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
           footer.counter();
           footer.hideFooter();
 
-                 this.filterTasks();
           this.render();
           localStorage.setItem("tasks", JSON.stringify(this.tasks));
-      
         }
       });
     }
@@ -55,21 +50,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
     deleteTask(id) {
       this.tasks = this.tasks.filter((item) => {
-     
         return item.id !== id;
       });
 
       this.filterTasks();
       this.render();
       this.changeValueTask();
+      if (this.showTasks.length === 0) {
+        this.completeAllSpan.classList.add("not_visibility");
+      }
+
       localStorage.setItem("tasks", JSON.stringify(this.tasks));
     }
 
+    clearAllCompleted() {
+      this.tasks = this.tasks.filter((item) => {
+        return !item.completed;
+      });
+
+      this.filterTasks();
+      this.hideCheckbox();
+      footer.counter();
+      footer.toggleBtnCompleteTask();
+      footer.hideFooter();
+      this.render();
+      this.checkAdditionalElement();
+
+      localStorage.setItem("tasks", JSON.stringify(this.tasks));
+    }
+
+    checkAdditionalElement() {
+      if (this.tasks.length === 0) {
+        console.log("ok");
+        footer.showAllTasks();
+        footer.footer.classList.add("hide");
+        this.completeAllSpan.classList.add("not_visibility");
+      } else {
+        console.log("no");
+        footer.showAllTasks();
+      }
+    }
     changeValueTask(id, completed) {
- 
-      this.tasks.forEach((item) => {
+      this.showTasks.forEach((item) => {
         if (item.id === id) {
-          
           item.completed = !completed;
         }
       });
@@ -80,22 +103,15 @@ document.addEventListener("DOMContentLoaded", () => {
         : (this.completedAllCheckbox.checked = false);
 
       this.hideCheckbox();
+      this.filterTasks();
       footer.counter();
-
+      footer.toggleBtnCompleteTask();
       this.render();
       localStorage.setItem("tasks", JSON.stringify(main.tasks));
     }
 
     hideCheckbox() {
-      if (this.tasks.length === 0 && localStorage.getItem("tasks")) {
-       
-
-        console.log("not visibility checkbox");
-        console.log(
-          !localStorage.getItem("tasks"),
-          '!localStorage.getItem("tasks")'
-        );
-        console.log(this.tasks.length === 0, "this.tasks.length === 0 ");
+      if (this.tasks.length === 0) {
         this.completeAllSpan.classList.add("not_visibility");
       } else {
         this.completeAllSpan.classList.remove("not_visibility");
@@ -104,20 +120,29 @@ document.addEventListener("DOMContentLoaded", () => {
     filterTasks() {
       switch (this.marker) {
         case "all":
+          footer.btnAll.classList.add("active");
+          footer.btnActive.classList.remove("active");
+          footer.btnCompleted.classList.remove("active");
           this.showTasks = this.tasks;
-          // console.log(this.showTasks, "all");
+
           break;
         case "active":
+          footer.btnAll.classList.remove("active");
+          footer.btnActive.classList.add("active");
+          footer.btnCompleted.classList.remove("active");
           this.showTasks = this.tasks.filter((item) => {
             return item.completed === false;
           });
-          // console.log(this.showTasks, "active");
+
           break;
         case "completed":
+          footer.btnAll.classList.remove("active");
+          footer.btnActive.classList.remove("active");
+          footer.btnCompleted.classList.add("active");
           this.showTasks = this.tasks.filter((item) => {
             return item.completed === true;
           });
-          // console.log(this.showTasks, "completed");
+
           break;
       }
     }
@@ -129,7 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     toggleMainCheckbox() {
-      // console.log("ok");
       if (this.completedAllCheckbox.checked) {
         this.tasks.forEach((item) => {
           return (item.completed = true);
@@ -139,8 +163,12 @@ document.addEventListener("DOMContentLoaded", () => {
           return (item.completed = false);
         });
       }
+
+      this.filterTasks();
       footer.counter();
+      footer.toggleBtnCompleteTask();
       this.render();
+
       localStorage.setItem("tasks", JSON.stringify(this.tasks));
     }
 
@@ -152,24 +180,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadFromLS() {
       if (localStorage.getItem("tasks")) {
-       
         main.tasks = JSON.parse(localStorage.getItem("tasks")).map(
           (item) => new Task(item.descr, item.id, item.completed)
         );
- 
-        main.render();
       }
+      this.filterTasks();
+      this.render();
+      this.changeValueTask();
+      footer.hideFooter();
+      footer.toggleBtnCompleteTask();
+      footer.counter();
     }
 
     init() {
-      this.loadFromLS(), this.filterTasks(), this.render();
+      this.loadFromLS(), this.filterTasks(), this.bindToggleMainCheckbox();
+      footer.bindEvent();
     }
 
     render() {
       this.clearList();
       console.log("render");
       this.showTasks.forEach((taskItem) => {
-        // console.log(item, "item");
         const itemList = document.createElement("li"),
           wrapper = document.createElement("div"),
           checkmark = document.createElement("div"),
@@ -220,17 +251,18 @@ document.addEventListener("DOMContentLoaded", () => {
         task.appendChild(input);
 
         btnPlace.appendChild(btn);
-       
 
         btn.addEventListener("click", () => taskItem.deleteTask());
 
-        // console.log("taskItem", taskItem);
         task.addEventListener("dblclick", taskItem.setEdit.bind(taskItem));
 
         checkbox.addEventListener("change", (e) =>
           taskItem.toggleCompleteTask(e)
         );
 
+        if (taskItem.completed) {
+          task.classList.add("active_task");
+        }
         localStorage.setItem("tasks", JSON.stringify(this.tasks));
       });
     }
@@ -238,19 +270,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   class Task {
     constructor(descr, id, completed) {
-      // console.log(id, "id from constructor");
       this.id = id;
       this.descr = descr;
       this.completed = completed;
     }
 
     deleteTask() {
-      // console.log(this.id, "id");
       main.deleteTask(this.id);
     }
 
     toggleCompleteTask() {
-      // taskValue.changeValueTask(this.id);
       main.changeValueTask(this.id, this.completed);
     }
 
@@ -261,21 +290,33 @@ document.addEventListener("DOMContentLoaded", () => {
       target.removeAttribute("disabled");
       target.classList.add("active");
       target.value = this.descr;
-      console.log(target);
-      target.focus();
 
-      target.addEventListener("blur", () => {
-        target.parentElement.nextElementSibling.classList.add("hide");
-        this.descr = target.value;
+      target.parentElement.nextElementSibling.classList.add("hide");
 
-        target.classList.remove("active");
-
-        target.parentElement.nextElementSibling.classList.remove("hide");
-        main.render();
-        // this.editTask()
+      target.addEventListener("blur", (e) => this.editTask(e));
+      
+      target.addEventListener("keydown", (e) => {
+        if (e.keyCode === 13) {
+          target.removeEventListener("blur", this.editTask);
+          this.editTask(e);
+        }
       });
+    }
 
-      console.log(this);
+    editTask(e) {
+      const target = e.target;
+      if (!target.value.trim()) {
+        this.deleteTask();
+      }
+
+      if (target.value.length > 30) {
+        target.value = target.value.substring(0, 30) + "...";
+      }
+      this.descr = target.value;
+
+      target.classList.remove("active");
+
+      main.render();
     }
   }
 
@@ -297,7 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     hideFooter() {
-      if (main.tasks.length === 0 && localStorage.getItem("tasks") === null) {
+      if (main.tasks.length === 0) {
         this.footer.classList.add("hide");
       } else {
         this.footer.classList.remove("hide");
@@ -307,7 +348,6 @@ document.addEventListener("DOMContentLoaded", () => {
     counter() {
       const res = main.tasks.reduce(
         function (acc, current) {
-      
           if (current.completed) {
             acc.completed += (acc[current.completed] || 0) + 1;
           } else {
@@ -321,19 +361,19 @@ document.addEventListener("DOMContentLoaded", () => {
       this.activeTask.textContent = res.active;
       this.completedTask.textContent = res.completed;
     }
+
     delete() {
       main.deleteTask();
+      footer.hideFooter();
     }
 
     toggleBtnCompleteTask() {
-      console.log(this.completedTask.parentElement);
       const res = main.tasks.some((item) => {
-       
         return item.completed;
       });
-      console.log(res);
+
       res
-        ? this.completedTask.parentElement. classList.remove("not_visibility")
+        ? this.completedTask.parentElement.classList.remove("not_visibility")
         : this.completedTask.parentElement.classList.add("not_visibility");
     }
 
@@ -342,12 +382,12 @@ document.addEventListener("DOMContentLoaded", () => {
       main.marker = "all";
       main.filterTasks();
       this.delete();
+
       main.render();
 
       this.btnAll.classList.add("active");
       this.btnActive.classList.remove("active");
       this.btnCompleted.classList.remove("active");
-    
     }
 
     showActiveTasks() {
@@ -362,7 +402,6 @@ document.addEventListener("DOMContentLoaded", () => {
       this.btnCompleted.classList.remove("active");
 
       if (main.showTasks.length === 0) {
-        console.log("11111111111111111111");
         main.completeAllSpan.classList.add("not_visibility");
       }
     }
@@ -376,18 +415,15 @@ document.addEventListener("DOMContentLoaded", () => {
       this.btnActive.classList.remove("active");
       this.btnCompleted.classList.add("active");
 
-      main.completedAllCheckbox.checked = true;
       main.completeAllSpan.classList.remove("not_visibility");
-      main.tasks.some((item) => {
-        if (!item.completed) {
-          main.completedAllCheckbox.checked = false;
-        }
-      });
 
+      if (main.showTasks.length === 0) {
+        main.completeAllSpan.classList.add("not_visibility");
+      }
       main.render();
     }
 
-    bindevent() {
+    bindEvent() {
       this.btnAll.addEventListener("click", () => {
         this.showAllTasks();
       });
@@ -396,6 +432,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       this.btnCompleted.addEventListener("click", () => {
         this.showCompletedTasks();
+      });
+      this.completedTask.parentElement.addEventListener("click", () => {
+        main.clearAllCompleted();
       });
     }
   }
@@ -410,9 +449,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.main = main;
 
-  main.bindToggleMainCheckbox();
-  main.init();
-
   const footer = new Footer(
     ".footer",
     ".todo_active strong",
@@ -421,9 +457,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ".btn_compleated", // oшиблась при названии класса
     ".clear_completed strong"
   );
-  footer.counter();
+
+  main.init();
 
   footer.hideFooter();
-  footer.bindevent();
-  footer.toggleBtnCompleteTask();
 });
